@@ -27,7 +27,7 @@ class RecipeDetails extends StatelessWidget {
                       child: CachedNetworkImage(
                         // TODO 1
                         imageUrl:
-                            'https://www.edamam.com/web-img/e42/e42f9119813e890af34c259785ae1cfb.jpg',
+                            'https://www.edamam.com/web-img/76e/76e01f7ebf4796a1ddeb075bf78989f2.jpg',
                         alignment: Alignment.topLeft,
                         fit: BoxFit.fill,
                         width: size.width,
@@ -54,7 +54,7 @@ class RecipeDetails extends StatelessWidget {
                 const Padding(
                   padding: EdgeInsets.only(left: 16.0),
                   child: Text(
-                    '111111111111',
+                    'Channa',
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
                 ),

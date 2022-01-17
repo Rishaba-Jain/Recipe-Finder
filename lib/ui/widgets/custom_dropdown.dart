@@ -51,7 +51,7 @@ class _CustomDropdownMenuItemState<T> extends State<CustomDropdownMenuItem<T>> {
                   }
                 },
                 child: SvgPicture.asset(
-                  'images/dismiss.svg',
+                  'assets/images/dismiss.svg',
                   color: Colors.grey,
                   semanticsLabel: 'Back',
                 ),

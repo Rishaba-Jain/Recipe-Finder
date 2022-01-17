@@ -53,12 +53,12 @@ class _MyRecipesListState extends State<MyRecipesList> {
                     leading: CachedNetworkImage(
                       // TODO 5
                       imageUrl:
-                          'http://www.seriouseats.com/recipes/2011/12/recipe.html',
+                          'https://www.edamam.com/web-img/76e/76e01f7ebf4796a1ddeb075bf78989f2.jpg',
                       height: 120,
                       width: 60,
                       fit: BoxFit.cover,
                     ),
-                    title: const Text('asdasdasd'),
+                    title: const Text('my_recipes_list.dart'),
                   ),
                 ),
               ),
