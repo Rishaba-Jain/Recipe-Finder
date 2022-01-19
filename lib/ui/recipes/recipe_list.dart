@@ -1,15 +1,16 @@
 import 'dart:math';
-import 'dart:convert';
+import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:chopper/chopper.dart';
 
-import '../../network/recipe_model.dart';
-import '../../network/recipe_service.dart';
-import '../widgets/custom_dropdown.dart';
-import '../colors.dart';
-import '../recipe_card.dart';
+import 'package:recipe_finder/network/recipe_model.dart';
+import 'package:recipe_finder/network/recipe_service.dart';
+import 'package:recipe_finder/network/model_response.dart';
+import 'package:recipe_finder/ui/widgets/custom_dropdown.dart';
+import 'package:recipe_finder/ui/colors.dart';
+import 'package:recipe_finder/ui/recipe_card.dart';
 import 'recipe_details.dart';
 
 class RecipeList extends StatefulWidget {
@@ -60,12 +61,6 @@ class _RecipeListState extends State<RecipeList> {
           }
         }
       });
-  }
-
-  Future<APIRecipeQuery> getRecipeData(String query, int from, int to) async {
-    final recipeJson = await RecipeService().getRecipes(query, from, to);
-    final recipeMap = json.decode(recipeJson);
-    return APIRecipeQuery.fromJson(recipeMap);
   }
 
   @override
@@ -138,10 +133,11 @@ class _RecipeListState extends State<RecipeList> {
                       autofocus: false,
                       textInputAction: TextInputAction.done,
                       onSubmitted: (value) {
-                        if (!previousSearches.contains(value)) {
-                          previousSearches.add(value);
-                          savePreviousSearches();
-                        }
+                        // if (!previousSearches.contains(value)) {
+                        //   previousSearches.add(value);
+                        //   savePreviousSearches();
+                        // }
+                        startSearch(searchTextController.text);
                       },
                       controller: searchTextController,
                       // onChanged: (query) => {
@@ -212,15 +208,18 @@ class _RecipeListState extends State<RecipeList> {
   }
 
   Widget _buildRecipeLoader(BuildContext context) {
-    if(searchTextController.text.length < 3) {
+    if (searchTextController.text.length < 3) {
       return Container();
     }
 
-    return FutureBuilder<APIRecipeQuery>(
-      future: getRecipeData(searchTextController.text.trim(), currentStartPosition, currentEndPosition),
+    return FutureBuilder<Response<Result<APIRecipeQuery>>>(
+      future: RecipeService.create().queryRecipes(
+        searchTextController.text.trim(),
+        currentStartPosition,
+        currentEndPosition,
+      ),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          
           if (snapshot.hasError) {
             return Center(
               child: Text(
@@ -232,21 +231,42 @@ class _RecipeListState extends State<RecipeList> {
           }
 
           loading = false;
-          final query = snapshot.data;
+
+          if (false == snapshot.data?.isSuccessful) {
+            var errorMessage = 'Problems getting data';
+            if (snapshot.data?.error != null &&
+                snapshot.data?.error is LinkedHashMap) {
+              final map = snapshot.data?.error as LinkedHashMap;
+              errorMessage = map['message'];
+            }
+            return Center(
+              child: Text(
+                errorMessage,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 18.0),
+              ),
+            );
+          }
+
+          final result = snapshot.data?.body;
+          if (result == null || result is Error) {
+            // Hit an error
+            inErrorState = true;
+            return _buildRecipeList(context, currentSearchList);
+          }
+          final query = (result as Success).value;
           inErrorState = false;
           if (query != null) {
             currentCount = query.count;
             hasMore = query.more;
             currentSearchList.addAll(query.hits);
 
-            if(query.to < currentEndPosition) {
+            if (query.to < currentEndPosition) {
               currentEndPosition = query.to;
             }
-
           }
 
           return _buildRecipeList(context, currentSearchList);
-
         } else {
           if (currentCount == 0) {
             // Show a loading indicator while waiting for the recipes
@@ -255,11 +275,7 @@ class _RecipeListState extends State<RecipeList> {
             return _buildRecipeList(context, currentSearchList);
           }
         }
-
-
       },
-    
-    
     );
   }
 
@@ -275,9 +291,7 @@ class _RecipeListState extends State<RecipeList> {
           crossAxisCount: 2,
           childAspectRatio: (itemWidth / itemHeight),
         ),
-
         itemCount: hits.length,
-
         itemBuilder: (BuildContext context, int index) {
           return _buildRecipeCard(recipeListContext, hits, index);
         },
