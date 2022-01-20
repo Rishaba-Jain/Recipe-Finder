@@ -1,10 +1,12 @@
 import 'package:json_annotation/json_annotation.dart';
+import '../data/models/models.dart';
 
 part 'recipe_model.g.dart';
 
 @JsonSerializable()
 class APIRecipeQuery {
-  factory APIRecipeQuery.fromJson(Map<String, dynamic> json) => _$APIRecipeQueryFromJson(json);
+  factory APIRecipeQuery.fromJson(Map<String, dynamic> json) =>
+      _$APIRecipeQueryFromJson(json);
   Map<String, dynamic> toJson() => _$APIRecipeQueryToJson(this);
 
   @JsonKey(name: 'q')
@@ -23,7 +25,6 @@ class APIRecipeQuery {
     required this.count,
     required this.hits,
   });
-
 }
 
 @JsonSerializable()
@@ -34,7 +35,8 @@ class APIHits {
     required this.recipe,
   });
 
-  factory APIHits.fromJson(Map<String, dynamic> json) => _$APIHitsFromJson(json);
+  factory APIHits.fromJson(Map<String, dynamic> json) =>
+      _$APIHitsFromJson(json);
   Map<String, dynamic> toJson() => _$APIHitsToJson(this);
 }
 
@@ -59,19 +61,20 @@ class APIRecipe {
     required this.totalTime,
   });
 
-  factory APIRecipe.fromJson(Map<String, dynamic> json) => _$APIRecipeFromJson(json);
+  factory APIRecipe.fromJson(Map<String, dynamic> json) =>
+      _$APIRecipeFromJson(json);
   Map<String, dynamic> toJson() => _$APIRecipeToJson(this);
 }
 
 String getCalories(double? calories) {
-  if(calories == null) {
+  if (calories == null) {
     return '0 KCAL';
   }
   return calories.floor().toString() + ' KCAL';
 }
 
 String getWeight(double? weight) {
-  if(weight == null) {
+  if (weight == null) {
     return '0g';
   }
   return weight.floor.toString() + 'g';
@@ -88,6 +91,20 @@ class APIIngredients {
     required this.weight,
   });
 
-  factory APIIngredients.fromJson(Map<String, dynamic> json) => _$APIIngredientsFromJson(json);
+  factory APIIngredients.fromJson(Map<String, dynamic> json) =>
+      _$APIIngredientsFromJson(json);
   Map<String, dynamic> toJson() => _$APIIngredientsToJson(this);
+}
+
+List<Ingredient> convertIngredients(List<APIIngredients> apiIngredients) {
+  final ingredients = <Ingredient>[];
+
+  apiIngredients.forEach((ingredient) {
+    ingredients.add(Ingredient(
+      name: ingredient.name,
+      weight: ingredient.weight,
+    ));
+  });
+
+  return ingredients;
 }

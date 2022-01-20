@@ -2,16 +2,19 @@ import 'dart:math';
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:chopper/chopper.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import 'recipe_details.dart';
+import 'package:recipe_finder/ui/colors.dart';
+import 'package:recipe_finder/ui/recipe_card.dart';
+import 'package:recipe_finder/data/models/models.dart';
 import 'package:recipe_finder/network/recipe_model.dart';
 import 'package:recipe_finder/network/recipe_service.dart';
 import 'package:recipe_finder/network/model_response.dart';
 import 'package:recipe_finder/ui/widgets/custom_dropdown.dart';
-import 'package:recipe_finder/ui/colors.dart';
-import 'package:recipe_finder/ui/recipe_card.dart';
-import 'recipe_details.dart';
+import 'package:recipe_finder/mock_service/mock_service.dart';
 
 class RecipeList extends StatefulWidget {
   const RecipeList({Key? key}) : super(key: key);
@@ -111,14 +114,15 @@ class _RecipeListState extends State<RecipeList> {
           children: [
             // Replace
             IconButton(
-                icon: const Icon(Icons.search),
-                onPressed: () {
-                  startSearch(searchTextController.text);
-                  final currentFocus = FocusScope.of(context);
-                  if (!currentFocus.hasPrimaryFocus) {
-                    currentFocus.unfocus();
-                  }
-                }),
+              icon: const Icon(Icons.search),
+              onPressed: () {
+                startSearch(searchTextController.text);
+                final currentFocus = FocusScope.of(context);
+                if (!currentFocus.hasPrimaryFocus) {
+                  currentFocus.unfocus();
+                }
+              },
+            ),
             const SizedBox(width: 6.0),
             Expanded(
               child: Row(
@@ -213,7 +217,7 @@ class _RecipeListState extends State<RecipeList> {
     }
 
     return FutureBuilder<Response<Result<APIRecipeQuery>>>(
-      future: RecipeService.create().queryRecipes(
+      future: Provider.of<MockService>(context).queryRecipes(
         searchTextController.text.trim(),
         currentStartPosition,
         currentEndPosition,
@@ -306,7 +310,19 @@ class _RecipeListState extends State<RecipeList> {
       onTap: () {
         Navigator.push(topLevelContext, MaterialPageRoute(
           builder: (context) {
-            return const RecipeDetails();
+            final detailRecipe = Recipe(
+              id: index,
+              label: recipe.label,
+              image: recipe.image,
+              url: recipe.url,
+              calories: recipe.calories,
+              totalTime: recipe.totalTime,
+              totalWeight: recipe.totalWeight,
+            );
+            detailRecipe.ingredients = convertIngredients(recipe.ingredients);
+            return RecipeDetails(
+              recipe: detailRecipe,
+            );
           },
         ));
       },
