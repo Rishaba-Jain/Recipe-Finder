@@ -11,10 +11,9 @@ import 'package:recipe_finder/ui/colors.dart';
 import 'package:recipe_finder/ui/recipe_card.dart';
 import 'package:recipe_finder/data/models/models.dart';
 import 'package:recipe_finder/network/recipe_model.dart';
-import 'package:recipe_finder/network/recipe_service.dart';
 import 'package:recipe_finder/network/model_response.dart';
 import 'package:recipe_finder/ui/widgets/custom_dropdown.dart';
-import 'package:recipe_finder/mock_service/mock_service.dart';
+import '../../network/service_interface.dart';
 
 class RecipeList extends StatefulWidget {
   const RecipeList({Key? key}) : super(key: key);
@@ -217,7 +216,7 @@ class _RecipeListState extends State<RecipeList> {
     }
 
     return FutureBuilder<Response<Result<APIRecipeQuery>>>(
-      future: Provider.of<MockService>(context).queryRecipes(
+      future: Provider.of<ServiceInterface>(context).queryRecipes(
         searchTextController.text.trim(),
         currentStartPosition,
         currentEndPosition,

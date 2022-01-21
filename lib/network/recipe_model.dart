@@ -77,7 +77,7 @@ String getWeight(double? weight) {
   if (weight == null) {
     return '0g';
   }
-  return weight.floor.toString() + 'g';
+  return weight.floor().toString() + 'g';
 }
 
 @JsonSerializable()
