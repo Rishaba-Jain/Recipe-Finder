@@ -21,6 +21,10 @@ dependencies:
   logging: 1.0.1 # To log network calls
   provider: 6.0.0 # for state management
   equatable: 2.0.3 # to check models for equality in maps and necessary for providers
+  sqflite: 2.0.0+4 # provides SQLite database access
+  path_provider: 2.0.2 # simplifies dealing with common file system locations
+  synchronized: 3.0.0 # helps implement lock mechanisms to prevent concurrent access, when needed
+  sqlbrite: 2.1.0 # reactive wrapper around sqflite that receives changes happening in the database via streams
 
 dev_dependencies:
   flutter_test:
