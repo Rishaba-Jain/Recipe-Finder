@@ -21,10 +21,14 @@ dependencies:
   logging: 1.0.1 # To log network calls
   provider: 6.0.0 # for state management
   equatable: 2.0.3 # to check models for equality in maps and necessary for providers
-  sqflite: 2.0.0+4 # provides SQLite database access
-  path_provider: 2.0.2 # simplifies dealing with common file system locations
-  synchronized: 3.0.0 # helps implement lock mechanisms to prevent concurrent access, when needed
+  # sqflite: 2.0.0+4 # provides SQLite database access
+  # path_provider: 2.0.2 # simplifies dealing with common file system locations
+  # synchronized: 3.0.0 # helps implement lock mechanisms to prevent concurrent access, when needed
   sqlbrite: 2.1.0 # reactive wrapper around sqflite that receives changes happening in the database via streams
+  moor_flutter: 4.0.0 # for dealing with database and repository
+
+dependency_overrides:
+  moor: 4.4.0
 
 dev_dependencies:
   flutter_test:
@@ -32,7 +36,8 @@ dev_dependencies:
   build_runner: 2.1.1
   json_serializable: 4.1.4
   chopper_generator: 4.0.1
-  
+  moor_generator: 4.4.1
+
 flutter:
   uses-material-design: true
 

@@ -7,13 +7,15 @@ import 'package:recipe_finder/data/repository.dart';
 import 'package:recipe_finder/network/recipe_service.dart';
 import 'package:recipe_finder/network/service_interface.dart';
 // import 'package:recipe_finder/data/memory_repository.dart';
-import 'package:recipe_finder/data/sqlite/sqlite_repository.dart';
+// import 'package:recipe_finder/data/sqlite/sqlite_repository.dart';
+import 'package:recipe_finder/data/moor/moor_repository.dart';
 
 Future<void> main() async {
   _setupLogging();
   WidgetsFlutterBinding.ensureInitialized();
 
-  final repository = SqliteRepository();
+  // final repository = SqliteRepository();
+  final repository = MoorRepository();
   await repository.init();
 
   runApp(MyApp(repository: repository));
